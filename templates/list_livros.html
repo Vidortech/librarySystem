@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Livros</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Lista de Livros</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Página Inicial</a></li>
+                <li><a href="{{ url_for('add_livro') }}">Adicionar Livro</a></li>
+                <li><a href="{{ url_for('socios') }}">Sócios</a></li>
+                <li><a href="{{ url_for('movimentacoes') }}">Movimentações</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form id="searchForm" action="/search_livros" method="GET">
+            <input type="text" name="query" id="searchLivros" placeholder="Pesquisar livros...">
+            <button type="submit">Buscar</button>
+        </form>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Código de Barras</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for livro in livros %}
+                <tr>
+                    <td>{{ livro.idLivro }}</td>
+                    <td>{{ livro.titulo }}</td>
+                    <td>{{ livro.autor }}</td>
+                    <td>{{ livro.codigo_barras }}</td>
+                    <td>{{ livro.status }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_livro', id=livro.idLivro) }}" class="btn btn-warning">Editar</a>
+                        <form action="{{ url_for('delete_livro', id=livro.idLivro) }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <p>&copy; 2024 Biblioteca</p>
+    </footer>
+    
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#searchLivros').on('input', function() {
+        var query = $(this).val();
+        $.ajax({
+            url: '/search_livros',
+            method: 'GET',
+            data: { query: query },
+            success: function(data) {
+                $('#resultsLivros').empty();
+                data.forEach(function(item) {
+                    $('#resultsLivros').append('<div>' + item.title + ' - ' + item.autor + ' - ' + item.codigo_barras + '</div>');
+                });
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

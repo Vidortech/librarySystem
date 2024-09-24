@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Movimentações</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome do Sócio</th>
+                <th>Título do Livro</th>
+                <th>Código de Barras</th>
+                <th>Data de Empréstimo</th>
+                <th>Data de Devolução</th>
+                <th>Prazo de Devolução (dias)</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movimentacao in movimentacoes %}
+                <tr>
+                    <td>{{ movimentacao.socio }}</td>
+                    <td>{{ movimentacao.livro }}</td>
+                    <td>{{ movimentacao.codigo_barras }}</td>
+                    <td>{{ movimentacao.data_emprestimo }}</td>
+                    <td>{{ movimentacao.data_devolucao }}</td>
+                    <td>{{ movimentacao.prazo_devolucao }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_movimentacao', id=movimentacao.id) }}" method="post" style="display: inline;">
+                            <button type="submit">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('add_movimentacao') }}">Adicionar Movimentação</a>
+    <a href="{{ url_for('index') }}">Voltar</a>
+</body>
+</html>

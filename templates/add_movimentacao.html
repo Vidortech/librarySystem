@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adicionar Movimentação</title>
+    <script>
+    function searchLivros() {
+        const codigoBarras = document.getElementById('codigo_barras').value;
+        fetch(`/search_livro?codigo_barras=${codigoBarras}`)
+            .then(response => response.json())
+            .then(data => {
+                const livroSelect = document.getElementById('livro_select');
+                livroSelect.innerHTML = '';
+                const message = document.getElementById('message');
+                message.textContent = '';
+
+                if (data && data.idLivro) {
+                    const option = document.createElement('option');
+                    option.value = data.idLivro;
+                    option.textContent = `${data.titulo} - ${data.codigo_barras}`;
+                    livroSelect.appendChild(option);
+                } else {
+                    livroSelect.innerHTML = '<option value="">Nenhum livro encontrado</option>';
+                    message.textContent = 'Nenhum livro encontrado com esse código de barras.';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar livro:', error);
+            });
+    }
+    </script>
+</head>
+<body>
+    <h1>Adicionar Movimentação</h1>
+    <form action="{{ url_for('add_movimentacao') }}" method="POST">
+        <label for="id_socio">Sócio:</label>
+        <select name="id_socio" required>
+            {% for socio in socios %}
+                <option value="{{ socio.id }}">{{ socio.nome }}</option>
+            {% endfor %}
+        </select><br><br>
+        
+        <label for="codigo_barras">Código de Barras:</label>
+        <input type="text" id="codigo_barras" name="codigo_barras" required oninput="searchLivros()"><br><br>
+                
+        <label for="id_livro">Livro:</label>
+        <select name="id_livro" id="livro_select" required>
+            <!-- Opções de livros serão adicionadas dinamicamente aqui -->
+        </select><br><br>
+        
+        <label for="data_emprestimo">Data de Empréstimo:</label>
+        <input type="date" id="data_emprestimo" name="data_emprestimo" required><br><br>
+
+        <label for="prazo_devolucao">Prazo de Devolução (em dias):</label>
+        <input type="number" name="prazo_devolucao" required><br><br>
+        
+        <input type="submit" value="Adicionar Movimentação">
+    </form>
+    <p id="message" style="color: red;"></p>
+    <a href="{{ url_for('movimentacoes') }}">Voltar</a>
+</body>
+</html>
